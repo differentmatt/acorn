@@ -220,4 +220,19 @@ describe("Lists", function () {
     return a";
     expect(util.run(code)).toEqual(['0', '1', '100', '22', '33', '5', '55']);
   });
+
+  it("if [1, 2, 3]", function () {
+    var code = "\
+    if [1, 2, 3]: return 'not empty'\n\
+    return 'empty'";
+    expect(util.run(code)).toBe("not empty");
+  });
+
+  it("if []", function () {
+    var code = "\
+    if []: return 'not empty'\n\
+    return 'empty'";
+    expect(util.run(code)).toBe("empty");
+  });
+
 });
