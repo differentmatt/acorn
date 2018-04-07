@@ -653,7 +653,14 @@
 
   function readToken_mult_modulo(code) { // '*%'
     var next = input.charCodeAt(tokPos + 1);
-    if (next === 42 && next === code) return finishOp(_exponentiation, 2);
+    // handle **=
+    if (next === 42 && next === code) {
+      var ch_after_mult = input.charCodeAt(tokPos + 2);
+      if (ch_after_mult === 61) {
+        return finishOp(_assign, 3);
+      }
+      return finishOp(_exponentiation, 2);
+    }
     if (next === 61) return finishOp(_assign, 2);
     return finishOp(_multiplyModulo, 1);
   }
@@ -1977,9 +1984,39 @@
       node.right = parseMaybeTuple(noIn);
       checkLVal(left);
 
-      if (node.operator === '+=' || node.operator === '*=') {
+       // optimize operators
+      if (node.operator === '+=' ||
+          node.operator === '*=' ||
+          node.operator === '-=' ||
+          node.operator === '%=' ||
+          node.operator === '/=' ||
+          node.operator === '**=') {
         var right = nc.createNodeSpan(node.right, node.right, "CallExpression");
-        right.callee = nc.createNodeOpsCallee(right, node.operator === '+=' ? "add" : "multiply");
+        var fn_name = '';
+        switch (node.operator) {
+          case '+=':
+            fn_name = 'add';
+            break;
+          case '*=':
+            fn_name = 'multiply';
+            break;
+          case '-=':
+            fn_name = '-';
+            break;
+          case '/=':
+            fn_name = '/';
+            break;
+          case '%=':
+            fn_name = '%';
+            break;
+          case '**=':
+            fn_name = 'pow';
+            break;
+          default:
+            fn_name = 'add';
+            break;
+        }
+        right.callee = nc.createNodeOpsCallee(right, fn_name);
         right.arguments = [left, node.right];
         node.right = right;
         node.operator = '=';
