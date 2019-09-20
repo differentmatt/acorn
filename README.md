@@ -9,7 +9,7 @@ This parser is a work in progress, adapted from the JavaScript parser [Acorn][ac
 
 [acorn]: https://github.com/marijnh/acorn
 
-Check out the [demo page](https://rawgit.com/differentmatt/filbert/master/test/interactive.html) to see what Filbert can do.
+Check out the [demo page](https://raw.githack.com/differentmatt/filbert/master/test/interactive.html) to see what Filbert can do.
 
 ## Want to contribute?
 
